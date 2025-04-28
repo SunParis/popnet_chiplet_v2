@@ -1,0 +1,12 @@
+[submodule "thirdparty/fmt"]
+	path = thirdparty/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "thirdparty/nlohmann_json"]
+	path = thirdparty/nlohmann_json
+	url = https://github.com/nlohmann/json.git
+[submodule ".old/popnet_chiplet"]
+	path = .old/popnet_chiplet
+	url = https://github.com/baikeina/popnet_chiplet.git
+[submodule ".old/popnet"]
+	path = .old/popnet
+	url = https://github.com/karellincoln/popnet
