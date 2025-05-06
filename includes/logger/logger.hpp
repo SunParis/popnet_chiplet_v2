@@ -12,6 +12,7 @@
 # define _GREEN_ fg(fmt::rgb(165, 210, 165))
 # define _ORANGE_ fg(fmt::rgb(230, 165, 105))
 # define _RED_ fg(fmt::rgb(250, 110, 110))
+# define THREAD_SAFE // Comment this line to `disable` thread safety
 
 # include <string>
 # include <iostream>
@@ -24,13 +25,13 @@
 # include "fmt/core.h"
 # include "fmt/color.h"
 
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
 
 # include <mutex>
 # include <atomic>
 # include <linux/futex.h>
 # include <sys/syscall.h>
-# include <unistd.h> // Add this include for syscall declaration
+# include <unistd.h>
 
 namespace Logger {
 
@@ -143,7 +144,7 @@ namespace Logger {
     inline LogLevel CURR_LOGLEVEL = LogLevel::Info;
     inline std::string LOGGER_OUT = _LOGGER_OUT_DEFAULT_;
 
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
 
     inline Logger::futex LOGGER_LOCK;
     inline Logger::futex LOGLEVEL_LOCK;
@@ -157,7 +158,7 @@ namespace Logger {
      * @param level The log level
      */
     inline void setLogLevel(LogLevel level) {
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
         const std::lock_guard<Logger::futex> lock(Logger::LOGLEVEL_LOCK);
 # endif
         Logger::CURR_LOGLEVEL = level;
@@ -168,7 +169,7 @@ namespace Logger {
      * @return The log level
      */
     inline LogLevel getLogLevel() {
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
         const std::lock_guard<Logger::futex> lock(Logger::LOGLEVEL_LOCK);
 # endif
         return Logger::CURR_LOGLEVEL;
@@ -181,7 +182,7 @@ namespace Logger {
      * @note The default output is std::cout
      */
     inline void setLoggerOut(const std::string& out) {
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
         const std::lock_guard<Logger::futex> lock(Logger::LOGGER_OUT_LOCK);
 # endif
         Logger::LOGGER_OUT = out;
@@ -192,7 +193,7 @@ namespace Logger {
      * @return The logger output
      */
     inline std::string getLoggerOut() {
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
         const std::lock_guard<Logger::futex> lock(Logger::LOGGER_OUT_LOCK);
 # endif
         return Logger::LOGGER_OUT;
@@ -209,7 +210,7 @@ namespace Logger {
         std::string timeStr = Logger::getCurrentTime();
 
         if (Logger::getLoggerOut() == "std::cout" || Logger::getLoggerOut() == "stdout") {
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
             const std::lock_guard<Logger::futex> lock(Logger::LOGGER_LOCK);
 # endif
             fmt::print("[{}][", timeStr);
@@ -235,7 +236,7 @@ namespace Logger {
         }
         else {
             std::ofstream logFile(Logger::getLoggerOut(), std::ios::app);
-# ifdef LOCK_ON
+# ifdef THREAD_SAFE
             const std::lock_guard<Logger::futex> lock(Logger::LOGGER_LOCK);
 # endif
             if (!logFile.is_open()) {
