@@ -233,9 +233,12 @@ void Sim::mainProcess() {
                 break;
             }
             else if (this->config_.isEndWithMinus1()) {
-                while (Global::inputTrace->isEmpty()) {
+                while (Global::inputTrace->isEmpty() && !Global::inputTrace->isReadFin()) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(500));
                 }
+		if (Global::inputTrace->isReadFin() && Global::inputTrace->isEmpty()) {
+                    break;
+            	}
                 Global::messageQueue.addMessage(
                     MessEvent(
                         Global::inputTrace->front().start_time,
