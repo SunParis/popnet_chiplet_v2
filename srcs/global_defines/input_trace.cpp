@@ -22,7 +22,8 @@ InputTrace::InputTrace(const std::string& trace_file_name, bool sync_protocol_en
     dimension_(dimension),
     input_traces_(),
     router_traces_(),
-    read_end(false)
+    read_end(false),
+    count_(0)
 {}
 
 void InputTrace::readTraceFile() {
@@ -75,6 +76,7 @@ void InputTrace::readTraceFile() {
     }
     trace_file.close();
     Logger::info("Read packets: {}", count);
+    this->count_ += count;
     this->has_read_ = this->getFileSize(this->trace_file_name_);
 }
 
