@@ -22,6 +22,7 @@
 # include <iomanip>
 # include <sstream>
 
+# define FMT_HEADER_ONLY
 # include "fmt/core.h"
 # include "fmt/color.h"
 
@@ -240,7 +241,7 @@ namespace Logger {
             const std::lock_guard<Logger::futex> lock(Logger::LOGGER_LOCK);
 # endif
             if (!logFile.is_open()) {
-                fmt::print("[{}][");
+                fmt::print("[{}][", timeStr);
                 fmt::print(_RED_, "error");
                 fmt::print("\033[0m");
                 fmt::print("] ");
