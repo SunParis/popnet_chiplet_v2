@@ -36,7 +36,7 @@ void InputTrace::readTraceFile() {
         return;
     }
     trace_file.seekg(this->has_read_, std::ios::beg);
-    std::size_t count = 0;
+    std::size_t count = this->count_;
     
     if (!this->sync_protocol_enable_) {
         SPacket spacket(this->dimension_);
@@ -75,8 +75,8 @@ void InputTrace::readTraceFile() {
         }
     }
     trace_file.close();
-    Logger::info("Read packets: {}", count);
-    this->count_ += count;
+    Logger::info("Read packets: {}", count - this->count_);
+    this->count_ = count;
     this->has_read_ = this->getFileSize(this->trace_file_name_);
 }
 
