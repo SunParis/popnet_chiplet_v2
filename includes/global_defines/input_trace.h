@@ -6,7 +6,7 @@
 # include <filesystem>
 # include <fstream>
 # include <queue>
-# include <map>
+# include <unordered_map>
 
 # include "global_defines/packet_defines.h"
 # include "global_defines/proto_engine.h"
@@ -18,14 +18,20 @@ using FileSizeType = decltype(std::filesystem::file_size(std::declval<const std:
 class InputTrace {
 
 private:
-    
+
     std::string trace_file_name_;
 
     FileSizeType has_read_;
 
     bool sync_protocol_enable_;
 
-    std::map<AddrType, std::priority_queue<SPacket, std::vector<SPacket>, std::greater<SPacket>>> router_traces_;
+    bool read_end;
+
+    std::unordered_map<
+        AddrType,
+        std::priority_queue<SPacket, std::vector<SPacket>, std::greater<SPacket>>,
+        AddrTypeHash
+    > router_traces_;
     std::priority_queue<SPacket, std::vector<SPacket>, std::greater<SPacket>> input_traces_;
 
     std::size_t dimension_;
@@ -45,6 +51,8 @@ public:
     bool isEmpty();
 
     bool isEmpty(const AddrType& address);
+
+    bool isReadFin();
 
     void popFront();
 

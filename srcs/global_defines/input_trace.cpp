@@ -21,10 +21,12 @@ InputTrace::InputTrace(const std::string& trace_file_name, bool sync_protocol_en
     has_read_(0),
     dimension_(dimension),
     input_traces_(),
-    router_traces_()
+    router_traces_(),
+    read_end(false)
 {}
 
 void InputTrace::readTraceFile() {
+    if (this->read_end) return;
     std::ifstream trace_file(this->trace_file_name_);
     if (!trace_file.is_open()) {
         throw std::runtime_error(std::string("Failed to open trace file: ") + this->trace_file_name_);
@@ -38,6 +40,10 @@ void InputTrace::readTraceFile() {
     if (!this->sync_protocol_enable_) {
         SPacket spacket(this->dimension_);
         while (trace_file >> spacket.start_time) {
+            if (spacket.start_time == -1) {
+                this->read_end = true;
+                break;
+            }
             this->readAddress(spacket.src_addr, trace_file);
             this->readAddress(spacket.des_addr, trace_file);
             trace_file >> spacket.packet_size;
@@ -50,7 +56,12 @@ void InputTrace::readTraceFile() {
     }
     else {
         ProtoPacket packet(this->dimension_);
-        while (trace_file >> packet.src_time >> packet.des_time) {
+        while (trace_file >> packet.src_time) {
+            if (packet.src_time == -1) {
+                this->read_end = true;
+                break;
+            }
+            trace_file >> packet.des_time;
             this->readAddress(packet.src_addr, trace_file);
             this->readAddress(packet.des_addr, trace_file);
             trace_file >> packet.packet_size >> packet.proto_dsc;
@@ -62,6 +73,7 @@ void InputTrace::readTraceFile() {
             count++;
         }
     }
+    trace_file.close();
     Logger::info("Read packets: {}", count);
     this->has_read_ = this->getFileSize(this->trace_file_name_);
 }
@@ -85,6 +97,10 @@ bool InputTrace::isEmpty(const AddrType& address) {
         return true;
     }
     return this->router_traces_[address].empty();
+}
+
+bool InputTrace::isReadFin() {
+    return this->read_end;
 }
 
 void InputTrace::popFront() {

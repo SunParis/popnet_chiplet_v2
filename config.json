@@ -16,7 +16,8 @@
         "reconfig_file": "reconfig.txt",
         "trace_file": "trace.txt",
         "delay_file": "delayInfo.txt",
-        "log_file": "log.txt"
+        "log_file": "log.txt",
+        "end_with_-1": false
     },
     "config.json example 2": {
         "vertices": 9,

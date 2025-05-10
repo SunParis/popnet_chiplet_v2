@@ -42,7 +42,6 @@
 # define START_RECONFIGURATION_PERIOD_NUMBER    2822
 # define VC_NULL                                (VCType(-1, -1))
 # define LOCAL_INPUT_TIME_0                     (std::numeric_limits<TimeType>::infinity())
-# define LOCAL_INPUT_TIME_0_0                   (-std::numeric_limits<TimeType>::infinity())
 # define VIRTUAL_CHANNEL_COUNT_0                (2)
 
 # define SPD_LAUNCH                             0x10000
@@ -215,5 +214,43 @@ std::ostream& operator<<(std::ostream& os, const ProtoState& state);
  * @brief operator<< overload for `AddrType`.
  */
 std::ostream& operator<<(std::ostream& os, const AddrType& address);
+
+/**
+ * @brief Hash function for AddrType.
+ */
+struct AddrTypeHash {
+    std::size_t operator()(const AddrType& addr) const {
+        std::size_t seed = addr.size();
+        std::hash<long> hasher;
+        for (const long& i : addr) {
+            // Combine hash values
+            seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
+};
+
+/**
+ * @brief Hash function for MessType.
+ */
+struct MessTypeHash {
+    std::size_t operator()(const MessType& mess_type) const {
+        return static_cast<std::size_t>(static_cast<unsigned char>(mess_type));
+    }
+};
+
+/**
+ * @brief Hash function for VCType.
+ */
+struct VCTypeHash {
+    std::size_t operator()(const VCType& vc_type) const {
+        std::size_t seed = 2;
+        std::hash<long> hasher;
+        seed ^= hasher(vc_type.first) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= hasher(vc_type.second) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        return seed;
+    }
+};
+
 
 # endif

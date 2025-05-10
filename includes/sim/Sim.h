@@ -3,6 +3,8 @@
 # ifndef _SIM_H_
 # define _SIM_H_ 1
 
+# include <thread>
+
 # include "global.h"
 # include "preprocess/config.h"
 # include "router/base_router.h"

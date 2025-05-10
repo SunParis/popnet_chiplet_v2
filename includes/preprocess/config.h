@@ -94,6 +94,14 @@ class Config {
      * @brief Whether packet loss is enabled
      */
     bool packet_loss_;
+
+    /**
+     * @brief Whether the end of the trace file 
+     *  is marked with -1
+     * @note If the end of the trace file isn't marked with -1,
+     *  the simulator will read the trace file until it reaches -1.
+     */
+    bool end_with_minus_1_;
 	
     /**
      * @brief The delay file name
@@ -222,6 +230,14 @@ public:
      * @brief The getter for the random_seed_ parameter
      */
     std::optional<long> getRandomSeed() const;
+
+    /**
+     * @brief Whether the end of the trace file 
+     *  is marked with -1
+     * @note If the end of the trace file isn't marked with -1,
+     *  the simulator will read the trace file until it reaches -1.
+     */
+    bool isEndWithMinus1() const;
 
 };
 

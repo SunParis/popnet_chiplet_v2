@@ -105,7 +105,8 @@ Sim::Sim(const Config& config)
         Global::RandomGen.reset_seed(config.getRandomSeed().value());
     }
     
-    Global::inputTrace = new InputTrace(config.getTraceFname(), config.isSyncProtocolEnable(), config.getCubeNumber());
+    Global::inputTrace = new InputTrace(config.getTraceFname(),
+        config.isSyncProtocolEnable(), config.getCubeNumber());
     
     this->router_count_ = config.getAryNumber();
     
@@ -226,13 +227,34 @@ void Sim::mainProcess() {
     long total_incoming = 0;
     this->setInitEvent();
 
-    while (!Global::messageQueue.empty() && (Global::getCurrTime() <= this->config_.getSimLength())) {
+    while (Global::getCurrTime() <= this->config_.getSimLength()) {
+        if (Global::messageQueue.empty()) {
+            if (Global::inputTrace->isReadFin()) {
+                break;
+            }
+            else if (this->config_.isEndWithMinus1()) {
+                while (Global::inputTrace->isEmpty()) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                }
+                Global::messageQueue.addMessage(
+                    MessEvent(
+                        Global::inputTrace->front().start_time,
+                        MessType::EVG
+                    )
+                );
+            }
+            else {
+                break;//qingxiaangdaren daociyiyou
+            }
+        }
+        
         MessEvent current_message(Global::messageQueue.getTop());
 
         Global::messageQueue.popFront();
         Global::setCurrTime(current_message.getEventStart());
-        Sassert(Global::getCurrTime() <= ((current_message.getEventStart()) + S_ELPS_), "Current time is greater than event start time.");
-                
+        Sassert(Global::getCurrTime() <= ((current_message.getEventStart()) + S_ELPS_),
+            "Current time is greater than event start time.");
+        
         Logger::debug("Get a message:: {}.", Logger::stream_to_string<MessEvent>(current_message));
         switch (current_message.getEventType()) {
             case MessType::EVG:
@@ -243,11 +265,17 @@ void Sim::mainProcess() {
                 this->receive_ROUTER_message(current_message);
                 break;
             case MessType::WIRE:
-                Logger::info("From Router {} to Router {} Port {} Virtual Channel {}.", Logger::stream_to_string<AddrType>(current_message.getSrc()), Logger::stream_to_string<AddrType>(current_message.getDes()), current_message.getPC(), current_message.getVC());
+                Logger::info("From Router {} to Router {} Port {} Virtual Channel {}.",
+                    Logger::stream_to_string<AddrType>(current_message.getSrc()),
+                    Logger::stream_to_string<AddrType>(current_message.getDes()),
+                    current_message.getPC(), current_message.getVC());
                 this->receive_WIRE_message(current_message);
                 break;
             case MessType::CREDIT:
-                Logger::info("From Router {} to Router {} Port {} Virtual Channel {}.", Logger::stream_to_string<AddrType>(current_message.getSrc()), Logger::stream_to_string<AddrType>(current_message.getDes()), current_message.getPC(), current_message.getVC());
+                Logger::info("From Router {} to Router {} Port {} Virtual Channel {}.",
+                    Logger::stream_to_string<AddrType>(current_message.getSrc()),
+                    Logger::stream_to_string<AddrType>(current_message.getDes()),
+                    current_message.getPC(), current_message.getVC());
                 this->receive_CREDIT_message(current_message);
                 break;
             case MessType::RECONFIGURATION:
@@ -265,7 +293,8 @@ void Sim::mainProcess() {
             for (unsigned char idx = 0; idx < 5; idx++) {
                 if (!Global::messageQueue.empty(MessType(idx))) {
                     if (idx == static_cast<unsigned char>(MessType::ROUTER)) {
-                        first_router_event_time = Global::messageQueue.getTop(MessType::ROUTER).getEventStart();
+                        first_router_event_time =
+                            Global::messageQueue.getTop(MessType::ROUTER).getEventStart();
                     }
                     else if (first_event_time == -1
                         || Global::messageQueue.getTop(MessType(idx)).getEventStart() < first_event_time

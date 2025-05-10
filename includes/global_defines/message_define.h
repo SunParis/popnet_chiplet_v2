@@ -10,7 +10,7 @@
 
 # include <vector>
 # include <queue>
-# include <map>
+# include <unordered_map>
 # include <sstream>
 
 # include "global_defines/defines.h"
@@ -170,7 +170,10 @@ private:
     
     size_type size_;
 
-    std::map<MessType, std::priority_queue<MessEvent, std::vector<MessEvent>, std::greater<MessEvent>>> m_q_;
+    std::unordered_map<MessType,
+        std::priority_queue<MessEvent, std::vector<MessEvent>, std::greater<MessEvent>>,
+        MessTypeHash
+    > m_q_;
 
 public:
 

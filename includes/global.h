@@ -68,6 +68,9 @@ inline TimeType getCurrTime() {
  * @param time The new time
  */
 inline void setCurrTime(TimeType time) {
+# ifdef INTERCHIPLET
+    std::cout << "[INTERCMD] CYCLE " << time << std::endl;
+# endif
     Global::CurrTime = time;
 }
 

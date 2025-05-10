@@ -96,10 +96,13 @@ void Config::fromJson(const std::string& fname) {
     if (j.contains("random_seed")) {
         this->random_seed_ = std::make_unique<long>(j["random_seed"].get<long>());
     }
+    if (j.contains("end_with_-1")) {
+        this->end_with_minus_1_ = j["end_with_-1"].get<bool>();
+    }
 }
 
 void Config::fromCMD(int argc, char * const argv []) {
-    std::string opt_str = "h:?:A:c:V:B:F:T:r:I:O:R:L:G:m:C:l:D:P";
+    std::string opt_str = "h:?:A:c:V:B:F:T:r:I:O:R:L:G:m:C:l:D:P:E";
     std::string usage = std::string("usage: ") + argv[0] + " [" + opt_str + "] \n";
     std::string help("h: help\n?: help\nA: array size\nc: cube dimension\nV: virtual channel number\nB: buffer size\nO: outbuffer size\nF: flit size\nL: link legnth\nT: simulation length\nI: trace file\nR: routing algorithm: 0-dimension 1-opty\n");
     while (true) {
@@ -183,6 +186,10 @@ void Config::fromCMD(int argc, char * const argv []) {
             case 'P':
                 this->sync_protocol_enable_ = true;
                 break;
+            
+            case 'E':
+                this->end_with_minus_1_ = true;
+                break;
 
             case '?':
                 throw std::runtime_error(help);
@@ -212,7 +219,8 @@ Config::Config(int argc, char * const argv [])
     log_fname_(),
     delay_fname_(),
     packet_loss_(false),
-    sync_protocol_enable_(false)
+    sync_protocol_enable_(false),
+    end_with_minus_1_(false)
 {
     std::string help("h: help\n?: help\nA: array size\nc: cube dimension\nV: virtual channel number\nB: buffer size\nO: outbuffer size\nF: flit size\nL: link legnth\nT: simulation length\nI: trace file\nR: routing algorithm: 0-dimension 1-opty\n");
     Sassert(argc > 1, help.c_str());
@@ -326,6 +334,10 @@ std::optional<long> Config::getRandomSeed() const {
         return std::nullopt;
     }
     return *this->random_seed_.get();
+}
+
+bool Config::isEndWithMinus1() const {
+    return this->end_with_minus_1_;
 }
 
 std::ostream& operator<<(std::ostream& os, const Config& cf) {
