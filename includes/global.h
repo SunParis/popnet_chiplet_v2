@@ -3,15 +3,15 @@
 # ifndef _GLOBAL_H_
 # define _GLOBAL_H_ 1
 
-# include "logger/logger.hpp"
-
-# include "global_defines/SStd.h"
 # include "global_defines/defines.h"
 # include "global_defines/packet_defines.h"
 # include "global_defines/RGen.h"
 # include "global_defines/proto_engine.h"
 # include "global_defines/message_define.h"
 # include "global_defines/input_trace.h"
+# include "global_defines/SStd.h"
+
+# include "logger/logger.hpp"
 
 namespace Global {
 
