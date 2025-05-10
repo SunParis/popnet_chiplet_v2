@@ -27,6 +27,8 @@ private:
 
     bool read_end;
 
+    std::size_t count_;
+
     std::unordered_map<
         AddrType,
         std::priority_queue<SPacket, std::vector<SPacket>, std::greater<SPacket>>,
