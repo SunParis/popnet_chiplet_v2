@@ -196,12 +196,14 @@ Sim::Sim(const Config& config)
         }
     }
     Global::inputTrace->readTraceFile();
-    Global::messageQueue.addMessage(
-        MessEvent(
-            Global::inputTrace->front().start_time,
-            MessType::EVG
-        )
-    );
+    if (!Global::inputTrace->isEmpty()) {
+        Global::messageQueue.addMessage(
+            MessEvent(
+                Global::inputTrace->front().start_time,
+                MessType::EVG
+            )
+        );
+    }
 
     Global::VC_MASK.push_back(1);
     for (u_int64_t i = 1; i < config_.getPhysicalPortNumber() * config_.getVirtualChannelNumber(); i++) {
