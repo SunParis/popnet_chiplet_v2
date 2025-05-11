@@ -471,25 +471,26 @@ void BaseRouter::injctPacket(long flit_id, const AddrType& src_addr,
 
             trans_it.packetDelay.push_back(flit.getSendFinTime() - flit.getStartTime());
             
-            std::ofstream ofs(this->config_.getDelayFname(), std::ios::app);
+            if (flit_type == FlitType::SINGLE || flit_type == FlitType::TAIL) {
+                std::ofstream ofs(this->config_.getDelayFname(), std::ios::app);
             
-            ofs << (long)trans_it.src_time << ' ';
+                ofs << (long)trans_it.src_time << ' ';
+                    
+                for (auto& x : trans_it.src_addr)
+                    ofs << x << ' ';
+                    
+                for (auto& x : trans_it.des_addr)
+                    ofs << x << ' ';
+                    
+                ofs << trans_it.protoDesc << ' ' << trans_it.packetDelay.size();
+                    
+                ofs << ' ' << flit.getSendFinTime() - flit.getStartTime();
                 
-            for (auto& x : trans_it.src_addr)
-                ofs << x << ' ';
-                
-            for (auto& x : trans_it.des_addr)
-                ofs << x << ' ';
-                
-            ofs << trans_it.protoDesc << ' ' << trans_it.packetDelay.size();
-                
-            for (auto& x : trans_it.packetDelay)
-                ofs << ' ' << (long)x;
-            
-            ofs << ' ' << -1;   
-            ofs << std::endl;
+                ofs << ' ' << -1;   
+                ofs << std::endl;
 
-            ofs.close();
+                ofs.close();
+            }
         }
 		
         this->input_module_.addFlit(0, vc_t.first, flit);
