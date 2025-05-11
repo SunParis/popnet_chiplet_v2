@@ -310,9 +310,13 @@ void Sim::mainProcess() {
             }
 
             if (first_event_time < 0) {
-                Global::messageQueue.clear();
+                if (this->config_.isEndWithMinus1()) {
+		    continue;
+		}
+		Global::messageQueue.clear();
                 break;
             }
+
             if (first_router_event_time < 0) {
                 Global::messageQueue.clear();
                 continue;
