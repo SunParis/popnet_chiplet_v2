@@ -235,22 +235,24 @@ void Sim::mainProcess() {
                 break;
             }
             else if (this->config_.isEndWithMinus1()) {
-                while (Global::inputTrace->isEmpty() && !Global::inputTrace->isReadFin()) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                while (!Global::inputTrace->isReadFin()) {
+                    if (!Global::inputTrace->isEmpty()) {
+                        break;
+                    }
                 }
-		if (Global::inputTrace->isReadFin() && Global::inputTrace->isEmpty()) {
+		        if (Global::inputTrace->isReadFin() && Global::inputTrace->isEmpty()) {
                     break;
             	}
-                Global::messageQueue.addMessage(
-                    MessEvent(
-                        Global::inputTrace->front().start_time,
-                        MessType::EVG
-                    )
-                );
             }
             else {
                 break;//qingxiaangdaren daociyiyou
             }
+            Global::messageQueue.addMessage(
+                MessEvent(
+                    Global::inputTrace->front().start_time,
+                    MessType::EVG
+                )
+            );
         }
         
         MessEvent current_message(Global::messageQueue.getTop());
@@ -310,13 +312,13 @@ void Sim::mainProcess() {
             }
 
             if (first_event_time < 0) {
-                if (this->config_.isEndWithMinus1()) {
-		    continue;
-		}
-		Global::messageQueue.clear();
-                break;
+                if (!this->config_.isEndWithMinus1()
+                    || Global::inputTrace->isReadFin()
+                ) {
+                    break;
+		        }
+                Global::messageQueue.clear();
             }
-
             if (first_router_event_time < 0) {
                 Global::messageQueue.clear();
                 continue;
