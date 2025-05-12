@@ -43,6 +43,7 @@ void InputTrace::readTraceFile() {
         while (trace_file >> spacket.start_time) {
             if (spacket.start_time == -1) {
                 this->read_end = true;
+                this->has_read_ = this->getFileSize(this->trace_file_name_);
                 break;
             }
             this->readAddress(spacket.src_addr, trace_file);
@@ -60,6 +61,7 @@ void InputTrace::readTraceFile() {
         while (trace_file >> packet.src_time) {
             if (packet.src_time == -1) {
                 this->read_end = true;
+                this->has_read_ = this->getFileSize(this->trace_file_name_);
                 break;
             }
             trace_file >> packet.des_time;
