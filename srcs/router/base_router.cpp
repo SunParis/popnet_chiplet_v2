@@ -265,6 +265,8 @@ void BaseRouter::updateTrans(TimeType new_time, const Flit& flit) {
             
         ofs << std::endl;
 
+        ofs.flush();
+
         ofs.close();
     }
 }
@@ -330,6 +332,7 @@ void BaseRouter::acceptFlit(TimeType accept_time, const Flit& target_flit) {
             ofs << x << ' ';
         }
 		ofs << t << std::endl;
+        ofs.flush();
         ofs.close();
 	}
 	else {
@@ -469,7 +472,7 @@ void BaseRouter::injctPacket(long flit_id, const AddrType& src_addr,
         if (this->config_.isSyncProtocolEnable()) {
             ProtoStateMachine& trans_it = Global::getTrans(flit.getPacketId());
 
-            trans_it.packetDelay.push_back(flit.getSendFinTime() - flit.getStartTime());
+            // trans_it.packetDelay.push_back(flit.getSendFinTime() - flit.getStartTime());
             
             if (flit_type == FlitType::SINGLE || flit_type == FlitType::TAIL) {
                 std::ofstream ofs(this->config_.getDelayFname(), std::ios::app);
@@ -482,12 +485,13 @@ void BaseRouter::injctPacket(long flit_id, const AddrType& src_addr,
                 for (auto& x : trans_it.des_addr)
                     ofs << x << ' ';
                     
-                ofs << trans_it.protoDesc << ' ' << 2;
+                ofs << trans_it.protoDesc << ' ' << trans_it.packetDelay.size();
                     
                 ofs << ' ' << flit.getSendFinTime() - flit.getStartTime();
                 
-                ofs << ' ' << -1;   
-                ofs << std::endl;
+                ofs << ' ' << -1 << std::endl;
+
+                ofs.flush();
 
                 ofs.close();
             }
