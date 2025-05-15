@@ -3,6 +3,8 @@
 # ifndef _SIM_H_
 # define _SIM_H_ 1
 
+# define NUM_OF_TYPES_OF_MESSAGES 5
+
 # include <thread>
 
 # include "global.h"
@@ -43,6 +45,8 @@ private:
     void receive_RECONFIGURATION_message(MessEvent mesg);
 
     BaseRouter& router(const AddrType& addr);
+
+    bool wait_for_new_trace();
 
 public:
     

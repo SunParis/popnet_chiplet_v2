@@ -231,28 +231,9 @@ void Sim::mainProcess() {
 
     while (Global::getCurrTime() <= this->config_.getSimLength()) {
         if (Global::messageQueue.empty()) {
-            if (Global::inputTrace->isReadFin()) {
-                break;
-            }
-            else if (this->config_.isEndWithMinus1()) {
-                while (!Global::inputTrace->isReadFin()) {
-                    if (!Global::inputTrace->isEmpty()) {
-                        break;
-                    }
-                }
-		        if (Global::inputTrace->isReadFin() && Global::inputTrace->isEmpty()) {
-                    break;
-            	}
-            }
-            else {
+            if (!(this->wait_for_new_trace())) {
                 break;//qingxiaangdaren daociyiyou
             }
-            Global::messageQueue.addMessage(
-                MessEvent(
-                    Global::inputTrace->front().start_time,
-                    MessType::EVG
-                )
-            );
         }
         
         MessEvent current_message(Global::messageQueue.getTop());
@@ -297,27 +278,31 @@ void Sim::mainProcess() {
             double first_event_time = -1;
             double first_router_event_time = -1;
 
-            for (unsigned char idx = 0; idx < 5; idx++) {
-                if (!Global::messageQueue.empty(MessType(idx))) {
-                    if (idx == static_cast<unsigned char>(MessType::ROUTER)) {
-                        first_router_event_time =
-                            Global::messageQueue.getTop(MessType::ROUTER).getEventStart();
+            while (true) {
+                for (unsigned char idx = 0; idx < NUM_OF_TYPES_OF_MESSAGES; idx++) {
+                    if (!Global::messageQueue.empty(MessType(idx))) {
+                        if (idx == static_cast<unsigned char>(MessType::ROUTER)) {
+                            first_router_event_time =
+                                Global::messageQueue.getTop(MessType::ROUTER).getEventStart();
+                        }
+                        else if (first_event_time == -1
+                            || Global::messageQueue.getTop(MessType(idx)).getEventStart() < first_event_time
+                        ) {
+                            first_event_time = Global::messageQueue.getTop(MessType(idx)).getEventStart();
+                        }
                     }
-                    else if (first_event_time == -1
-                        || Global::messageQueue.getTop(MessType(idx)).getEventStart() < first_event_time
-                    ) {
-                        first_event_time = Global::messageQueue.getTop(MessType(idx)).getEventStart();
+                }
+
+                if (first_event_time < 0) {
+                    if (!(this->wait_for_new_trace())) {
+                        break;
                     }
                 }
             }
 
             if (first_event_time < 0) {
-                if (!this->config_.isEndWithMinus1()
-                    || Global::inputTrace->isReadFin()
-                ) {
-                    break;
-		        }
                 Global::messageQueue.clear();
+                break;
             }
             if (first_router_event_time < 0) {
                 Global::messageQueue.clear();
@@ -381,4 +366,28 @@ void Sim::getResults() {
         total_link_power * POWER_NOM_,
         total_power * POWER_NOM_
     );
+}
+
+bool Sim::wait_for_new_trace() {
+    if (Global::inputTrace->isReadFin()) {
+        return false;
+    }
+    if (!this->config_.isEndWithMinus1()) {
+        return false;
+    }
+    while (!Global::inputTrace->isReadFin()) {
+        // Process will try to check if there is any new trace
+        // while calling `InputTrace::isEmpty()`
+        if (!Global::inputTrace->isEmpty()) {
+            Global::messageQueue.addMessage(
+                MessEvent(
+                    Global::inputTrace->front().start_time,
+                    MessType::EVG
+                )
+            );
+            return true;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    return false;
 }
