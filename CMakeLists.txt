@@ -74,15 +74,9 @@ if(USE_BOOST_FILESYSTEM)
     target_link_libraries(popnet PRIVATE ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
     target_compile_definitions(popnet PRIVATE USE_BOOST_FS)
 else()
-    include(CheckCXXSourceCompiles)
-    check_cxx_source_compiles("
-        #include <filesystem>
-    " HAVE_STD_FILESYSTEM)
-
-    if(HAVE_STD_FILESYSTEM)
+    if (GCC_VERSION VERSION_LESS 9)
         target_link_libraries(popnet PRIVATE stdc++fs)
     endif()
-
     target_compile_definitions(popnet PRIVATE USE_STD_FS)
 endif()
 
