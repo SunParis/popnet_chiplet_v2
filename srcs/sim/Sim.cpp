@@ -298,6 +298,9 @@ void Sim::mainProcess() {
                         break;
                     }
                 }
+		else {
+                    break;
+                }
             }
 
             if (first_event_time < 0) {
