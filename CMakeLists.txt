@@ -33,11 +33,56 @@ set(SIM_SRCS ${C_SOURCES} ${CXX_SOURCES} ${CC_SOURCES})
 
 link_directories(${POWER_RELEASE}/power)
 
+# Find Boost graph component (already included)
 find_package(Boost REQUIRED COMPONENTS graph)
+
+# Initialize flag to control whether to use Boost.Filesystem
+set(USE_BOOST_FILESYSTEM OFF)
+
+# Detect GCC compiler and check its version to decide filesystem implementation
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(STATUS "GCC detected, version: ${CMAKE_CXX_COMPILER_VERSION}")
+    string(REGEX MATCHALL "[0-9]+" GCC_VER_COMPONENTS ${CMAKE_CXX_COMPILER_VERSION})
+    list(GET GCC_VER_COMPONENTS 0 GCC_MAJOR)
+    list(GET GCC_VER_COMPONENTS 1 GCC_MINOR)
+
+    # Use Boost.Filesystem for GCC versions less than 9
+    if(GCC_MAJOR LESS 9)
+        message(STATUS "GCC version < 9 detected, will use Boost.Filesystem")
+        set(USE_BOOST_FILESYSTEM ON)
+    endif()
+endif()
+
+# If Boost.Filesystem is required, find Boost filesystem and system components
+if(USE_BOOST_FILESYSTEM)
+    message(STATUS "Finding Boost Filesystem and System components")
+    find_package(Boost REQUIRED COMPONENTS filesystem system)
+    if(NOT Boost_FOUND)
+        message(FATAL_ERROR "Boost not found but required for filesystem")
+    endif()
+endif()
 
 add_executable(popnet ${SIM_SRCS})
 
-target_link_libraries(popnet orion_power mygraph)
-target_link_libraries(popnet ${Boost_LIBRARIES})
-target_link_libraries(popnet fmt)
-target_link_libraries(popnet nlohmann_json::nlohmann_json)
+# Use keyword form (PRIVATE) for all target_link_libraries calls
+target_link_libraries(popnet PRIVATE orion_power mygraph)
+target_link_libraries(popnet PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(popnet PRIVATE fmt)
+target_link_libraries(popnet PRIVATE nlohmann_json::nlohmann_json)
+
+if(USE_BOOST_FILESYSTEM)
+    target_link_libraries(popnet PRIVATE ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+    target_compile_definitions(popnet PRIVATE USE_BOOST_FS)
+else()
+    include(CheckCXXSourceCompiles)
+    check_cxx_source_compiles("
+        #include <filesystem>
+    " HAVE_STD_FILESYSTEM)
+
+    if(HAVE_STD_FILESYSTEM)
+        target_link_libraries(popnet PRIVATE stdc++fs)
+    endif()
+
+    target_compile_definitions(popnet PRIVATE USE_STD_FS)
+endif()
+

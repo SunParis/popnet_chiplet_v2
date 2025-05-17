@@ -3,9 +3,16 @@
 # ifndef _CONFIG_H_
 # define _CONFIG_H_ 1
 
+# if defined(__GNUC__) && (__GNUC__ < 9)
+    # include <boost/filesystem.hpp>
+    namespace fs = boost::filesystem;
+# else
+    # include <filesystem>
+    namespace fs = std::filesystem;
+# endif
+
 # include <string>
 # include <unistd.h>
-# include <filesystem>
 # include <optional>
 # include <memory>
 

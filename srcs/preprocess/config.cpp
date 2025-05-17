@@ -240,14 +240,14 @@ Config::Config(int argc, char * const argv [])
     
     if (this->log_fname_.empty()) {
         this->log_fname_ = std::string("logs/") + Logger::getCurrentTime() + ".log";
-        if (!std::filesystem::exists("logs")) {
-            std::filesystem::create_directories("logs");
+        if (!fs::exists("logs")) {
+            fs::create_directories("logs");
         }
     }
     if (this->delay_fname_.empty()) {
         this->delay_fname_ = std::string("logs/") + Logger::getCurrentTime() + ".delayinfo.txt";
-        if (!std::filesystem::exists("logs")) {
-            std::filesystem::create_directories("logs");
+        if (!fs::exists("logs")) {
+            fs::create_directories("logs");
         }
     }
     

@@ -3,7 +3,7 @@
 
 
 FileSizeType InputTrace::getFileSize(const std::string& trace_file_name) {
-    return std::filesystem::file_size(trace_file_name);
+    return fs::file_size(trace_file_name);
 }
 
 void InputTrace::readAddress(AddrType& address, std::ifstream& trace_file) {

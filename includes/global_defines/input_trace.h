@@ -3,7 +3,14 @@
 # ifndef _INPUT_TRACE_H_
 # define _INPUT_TRACE_H_ 1
 
-# include <filesystem>
+# if defined(__GNUC__) && (__GNUC__ < 9)
+    # include <boost/filesystem.hpp>
+    namespace fs = boost::filesystem;
+# else
+    # include <filesystem>
+    namespace fs = std::filesystem;
+# endif
+
 # include <fstream>
 # include <queue>
 # include <unordered_map>
@@ -13,7 +20,7 @@
 # include "global_defines/defines.h"
 # include "logger/logger.hpp"
 
-using FileSizeType = decltype(std::filesystem::file_size(std::declval<const std::filesystem::path&>()));
+using FileSizeType = decltype(fs::file_size(std::declval<const fs::path&>()));
 
 class InputTrace {
 
