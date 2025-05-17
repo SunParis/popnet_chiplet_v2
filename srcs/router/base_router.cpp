@@ -485,7 +485,7 @@ void BaseRouter::injctPacket(long flit_id, const AddrType& src_addr,
                 for (auto& x : trans_it.des_addr)
                     ofs << x << ' ';
                     
-                ofs << trans_it.protoDesc << ' ' << trans_it.packetDelay.size();
+                ofs << trans_it.protoDesc << ' ' << 2;
                     
                 ofs << ' ' << flit.getSendFinTime() - flit.getStartTime();
                 
