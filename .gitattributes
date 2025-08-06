@@ -1,2 +1,3 @@
 docs/** linguist-documentation
 .old/** linguist-documentation
+.tests/** linguist-documentation
