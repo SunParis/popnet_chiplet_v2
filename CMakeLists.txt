@@ -1,79 +1,89 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.30")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.30")
     cmake_policy(SET CMP0167 NEW)
 endif()
 
-project(popnet)
+project(PopnetChiplet VERSION 2.0.0 LANGUAGES C CXX)
 
+option(POPNET_BUILD_TESTS "Build the Popnet test suite" ON)
+option(POPNET_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
+
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(POWER_RELEASE "thirdparty/orion_power_beta_mar2003")
-set(GRAPH_LIB "thirdparty/graph_lib")
-set(FMT_LIB "thirdparty/fmt")
-set(JSON_LIB "thirdparty/nlohmann_json")
+add_subdirectory(thirdparty/orion_power_beta_mar2003/power)
+add_subdirectory(thirdparty/graph_lib)
+add_subdirectory(thirdparty/fmt)
+add_subdirectory(thirdparty/nlohmann_json)
 
-add_subdirectory(${POWER_RELEASE}/power)
-add_subdirectory(${GRAPH_LIB})
-add_subdirectory(${FMT_LIB})
-add_subdirectory(${JSON_LIB})
+set(POPNET_CORE_SOURCES
+    src/alg/shortest_path_routing.cpp
+    src/global_defines/RGen.cpp
+    src/global_defines/SStd.cpp
+    src/global_defines/global.cpp
+    src/global_defines/input_trace.cpp
+    src/global_defines/message_define.cpp
+    src/global_defines/packet_defines.cpp
+    src/global_defines/proto_engine.cpp
+    src/io/delay_writer.cpp
+    src/preprocess/config.cpp
+    src/router/base_router.cpp
+    src/router/modules.cpp
+    src/router/router.cpp
+    src/router/topo_router.cpp
+    src/sim/Sim.cpp
+    src/sim/simulation_state.cpp
+)
 
-set(CMAKE_CXX_FLAGS "-Wno-deprecated -g -DPOWER_TEST")# -O3")
-include_directories(includes)
-include_directories(${POWER_RELEASE}/power ${POWER_RELEASE}/library)
-include_directories(${GRAPH_LIB})
-include_directories(${FMT_LIB}/include)
-include_directories(${JSON_LIB}/include)
+add_library(popnet_core STATIC ${POPNET_CORE_SOURCES})
+add_library(Popnet::Core ALIAS popnet_core)
 
-file(GLOB_RECURSE C_SOURCES "srcs/*.c")
-file(GLOB_RECURSE CXX_SOURCES "srcs/*.cpp")
-file(GLOB_RECURSE CC_SOURCES "srcs/*.cc")
-set(SIM_SRCS ${C_SOURCES} ${CXX_SOURCES} ${CC_SOURCES})
+target_include_directories(popnet_core
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/popnet>
+)
 
-link_directories(${POWER_RELEASE}/power)
+target_include_directories(popnet_core SYSTEM
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/orion_power_beta_mar2003/power
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/orion_power_beta_mar2003/library
+)
 
-# Find Boost graph component (already included)
-find_package(Boost REQUIRED COMPONENTS graph)
+target_compile_definitions(popnet_core
+    PRIVATE POWER_TEST
+)
 
-# Initialize flag to control whether to use Boost.Filesystem
-set(USE_BOOST_FILESYSTEM OFF)
+target_compile_options(popnet_core PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic;-Wconversion;-Wshadow>
+)
 
-# Detect GCC compiler and check its version to decide filesystem implementation
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(STATUS "GCC detected, version: ${CMAKE_CXX_COMPILER_VERSION}")
-    string(REGEX MATCHALL "[0-9]+" GCC_VER_COMPONENTS ${CMAKE_CXX_COMPILER_VERSION})
-    list(GET GCC_VER_COMPONENTS 0 GCC_MAJOR)
-    list(GET GCC_VER_COMPONENTS 1 GCC_MINOR)
+target_link_libraries(popnet_core
+    PUBLIC
+        fmt::fmt
+        mygraph
+        nlohmann_json::nlohmann_json
+    PRIVATE
+        orion_power
+)
 
-    # Use Boost.Filesystem for GCC versions less than 9
-    if(GCC_MAJOR LESS 9)
-        message(STATUS "GCC version < 9 detected, will use Boost.Filesystem")
-        set(USE_BOOST_FILESYSTEM ON)
-    endif()
+if(POPNET_ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(popnet_core PUBLIC -fsanitize=address,undefined -fno-omit-frame-pointer)
+    target_link_options(popnet_core PUBLIC -fsanitize=address,undefined -fno-omit-frame-pointer)
 endif()
 
-# If Boost.Filesystem is required, find Boost filesystem and system components
-if(USE_BOOST_FILESYSTEM)
-    message(STATUS "Finding Boost Filesystem and System components")
-    find_package(Boost REQUIRED COMPONENTS filesystem system)
-    if(NOT Boost_FOUND)
-        message(FATAL_ERROR "Boost not found but required for filesystem")
-    endif()
+add_executable(popnet app/main.cpp)
+target_link_libraries(popnet PRIVATE Popnet::Core)
+
+if(POPNET_BUILD_TESTS)
+    include(CTest)
+    add_subdirectory(tests)
 endif()
-
-add_executable(popnet ${SIM_SRCS})
-
-# Use keyword form (PRIVATE) for all target_link_libraries calls
-target_link_libraries(popnet PRIVATE orion_power mygraph)
-target_link_libraries(popnet PRIVATE ${Boost_LIBRARIES})
-target_link_libraries(popnet PRIVATE fmt)
-target_link_libraries(popnet PRIVATE nlohmann_json::nlohmann_json)
-
-if(USE_BOOST_FILESYSTEM)
-    target_link_libraries(popnet PRIVATE ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
-    target_compile_definitions(popnet PRIVATE USE_BOOST_FS)
-else()
-    target_compile_definitions(popnet PRIVATE USE_STD_FS)
-endif()
-

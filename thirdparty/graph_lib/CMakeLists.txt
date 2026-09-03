@@ -1,15 +1,17 @@
-# The min required cmake version is 3.5 before 
-cmake_minimum_required(VERSION 3.10)
-project(graph_lib)
-aux_source_directory(. DIR)
+find_package(Boost 1.74 REQUIRED COMPONENTS graph iostreams regex serialization filesystem)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE Release)
+add_library(mygraph STATIC graph.cpp)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -shared -fPIC")
+target_compile_features(mygraph PUBLIC cxx_std_20)
+target_include_directories(mygraph PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mygraph
+    PUBLIC
+        Boost::headers
+        Boost::graph
+        Boost::iostreams
+        Boost::regex
+        Boost::serialization
+        Boost::filesystem
+)
 
-find_package(Boost REQUIRED COMPONENTS graph iostreams regex serialization system filesystem)
-
-add_library(mygraph STATIC ${DIR})
-
-target_link_libraries(mygraph PRIVATE ${Boost_LIBRARIES})
+target_compile_options(mygraph PRIVATE -Wall -Wextra -Wpedantic)

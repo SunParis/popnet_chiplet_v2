@@ -1,55 +1,34 @@
-.PHONY: all build_dir configure build clean run test check
+.PHONY: all configure build test run check clean clean_logs
 
-all: build_dir configure build
+BUILD_DIR ?= build
+BUILD_TYPE ?= Release
 
-build_dir:
-	@if [ ! -d "build" ]; then \
-	    mkdir build; \
-	fi
+all: build
 
-configure: build_dir
-	@cd build && cmake ..
+configure:
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DPOPNET_BUILD_TESTS=ON
 
 build: configure
-	@cd build && make -j4
+	cmake --build $(BUILD_DIR) --parallel
 
-clean:
-	@if [ -d "build" ]; then \
-	    cd build && make clean; \
-	fi
-
-clean_logs:
-	rm -r logs;
-	mkdir logs;
+test: build
+	ctest --test-dir $(BUILD_DIR) --output-on-failure
 
 run: build
 	@if [ -n "$(ARGS)" ]; then \
-	    ./build/popnet $(ARGS); \
+		./$(BUILD_DIR)/popnet $(ARGS); \
 	else \
-	    echo "Error: No argument provided. Use 'make run ARGS=\"<ARGSname>\"'"; \
-	    ./build/popnet -h;\
-		echo "Running default test: make test"; \
-	    ./build/popnet -JSON ./config.json; \
-	fi
-
-test:
-	@if [ ! -e "build/popnet" ]; then \
-		$(MAKE) build; \
-		./build/popnet -JSON ./config.json; \
-	else \
-		./build/popnet -JSON ./config.json; \
+		./$(BUILD_DIR)/popnet -JSON ./config.json; \
 	fi
 
 check:
-	@if [ ! -e "build/popnet" ]; then \
-	    $(MAKE) build; \
-	fi
-	@if [ -n "$(ARGS)" ]; then \
-	    valgrind --tool=memcheck --leak-check=full ./build/popnet $(ARGS) > /dev/null; \
-	else \
-	    echo "Error: No arguments provided. Use 'make run ARGS=\"<arguments>\"'"; \
-	    echo "Running default test: make test"; \
-	    valgrind --tool=memcheck --leak-check=full ./build/popnet -JSON ./config.json > /dev/null; \
-	fi
+	cmake -S . -B $(BUILD_DIR)-san -DCMAKE_BUILD_TYPE=Debug \
+		-DPOPNET_BUILD_TESTS=ON -DPOPNET_ENABLE_SANITIZERS=ON
+	cmake --build $(BUILD_DIR)-san --parallel
+	ctest --test-dir $(BUILD_DIR)-san --output-on-failure
 
+clean:
+	cmake --build $(BUILD_DIR) --target clean
 
+clean_logs:
+	find logs -mindepth 1 -maxdepth 1 -type f -delete

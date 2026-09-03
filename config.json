@@ -32,7 +32,7 @@
         "routing_algorithm": "XY",
         "trace_file": "./tests/random_trace/bench"
     },
-    "vertices": 2,
+    "vertices": 9,
     "dimension": 2,
     "vc_cnt": 4,
     "input_buffer": 12,
