@@ -1,0 +1,22 @@
+-- {fmt} version: 11.2.1
+-- Build type: Release
+-- Using the multi-header code from /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/nlohmann_json/include/
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/dev
+[ 20%] Built target fmt
+[ 35%] Built target orion_power
+[ 41%] Built target mygraph
+[ 84%] Built target popnet_core
+[ 94%] Built target popnet_integration_tests
+[ 94%] Built target popnet
+[100%] Built target popnet_unit_tests
+Test project /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/dev
+    Start 1: popnet.unit
+1/2 Test #1: popnet.unit ......................   Passed    0.00 sec
+    Start 2: popnet.integration
+2/2 Test #2: popnet.integration ...............   Passed    0.00 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.01 sec

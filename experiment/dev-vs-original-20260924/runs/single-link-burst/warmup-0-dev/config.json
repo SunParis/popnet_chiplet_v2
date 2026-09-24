@@ -1,0 +1,19 @@
+{
+  "vertices": 9,
+  "dimension": 2,
+  "vc_cnt": 4,
+  "input_buffer": 12,
+  "output_buffer": 12,
+  "flit_size": 4,
+  "link_length": 1000,
+  "time": 200000,
+  "random_seed": 1,
+  "routing_algorithm": "XY",
+  "report_period": 2000,
+  "protocol_enable": false,
+  "packet_loss": false,
+  "end_with_-1": false,
+  "trace_file": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/inputs/single-link-burst.trace",
+  "log_file": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/runs/single-link-burst/warmup-0-dev/simulator.log",
+  "delay_file": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/runs/single-link-burst/warmup-0-dev/packets.delay"
+}

@@ -13,6 +13,7 @@
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
@@ -28,11 +29,28 @@
 
 # Executables
 *.exe
-*.out
 *.app
+/popnet
 
-# others
+# Local build and editor output
 build/
 build-*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
 .vscode/
 logs/*
+
+# Python benchmark caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+
+# Reproducible experiment bulk output; keep reports, inputs, configs, and measurements.
+/experiment/deps/
+/experiment/*/builds/
+/experiment/*/sources/
+/experiment/*/runs/**/*.log
+/experiment/*/runs/**/*.delay

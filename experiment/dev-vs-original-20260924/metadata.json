@@ -1,0 +1,142 @@
+{
+  "started_utc": "2026-09-24T10:10:43.854917+00:00",
+  "platform": "Linux-7.2.6-arch2-1-x86_64-with-glibc2.44",
+  "python": "3.14.7",
+  "compiler": "c++ (GCC) 16.2.1 20260810",
+  "cmake": "cmake version 4.4.3",
+  "cpu_model": "Intel(R) Core(TM) Ultra 5 225",
+  "cpu": 0,
+  "repetitions": 5,
+  "common_config": {
+    "vertices": 9,
+    "dimension": 2,
+    "vc_cnt": 4,
+    "input_buffer": 12,
+    "output_buffer": 12,
+    "flit_size": 4,
+    "link_length": 1000,
+    "time": 200000,
+    "random_seed": 1,
+    "routing_algorithm": "XY",
+    "report_period": 2000,
+    "protocol_enable": false,
+    "packet_loss": false,
+    "end_with_-1": false
+  },
+  "boost_prefix": "/home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr",
+  "boost_version": "1.88",
+  "ld_library_path": "/home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr/lib",
+  "cpu_governor": "powersave",
+  "runner_sha256": "b79dba5613ab6ea91d71c8337cb90e903c46b6da5df36626fc468ab3b1254c38",
+  "versions": {
+    "original": {
+      "ref": "main",
+      "commit": "9f54d6716f2bf7474790c686ba3bc84f37cfcc27",
+      "submodules": {
+        "thirdparty/fmt": "b5266fd3b91accec15d56a8f144b31dceed40d31",
+        "thirdparty/nlohmann_json": "230bfd15a2bb7f01ebb3fcd3cf898b697ef43c48"
+      },
+      "binary": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/original/popnet",
+      "binary_sha256": "abd621db82095bf0141f4479fffdde659c7db52593d1067eab686627b63d04fb",
+      "configure": [
+        "cmake",
+        "-S",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original",
+        "-B",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/original",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
+        "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
+        "-DCMAKE_PREFIX_PATH=/home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/original",
+        "--parallel",
+        "4"
+      ],
+      "representative_compile_command": "/usr/bin/c++ -DBOOST_GRAPH_DYN_LINK -DBOOST_GRAPH_NO_LIB -DUSE_STD_FS -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/includes -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/orion_power_beta_mar2003/power -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/orion_power_beta_mar2003/library -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/graph_lib -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/fmt/include -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/nlohmann_json/include -isystem /home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr/include -Wno-deprecated -g -DPOWER_TEST -O3 -DNDEBUG -std=gnu++20 -o CMakeFiles/popnet.dir/srcs/Main.cpp.o -c /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/srcs/Main.cpp"
+    },
+    "dev": {
+      "ref": "dev",
+      "commit": "41db2008e7b08485e9cbf5f4668f59cf9342c86e",
+      "submodules": {
+        "thirdparty/fmt": "b5266fd3b91accec15d56a8f144b31dceed40d31",
+        "thirdparty/nlohmann_json": "230bfd15a2bb7f01ebb3fcd3cf898b697ef43c48"
+      },
+      "binary": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/dev/popnet",
+      "binary_sha256": "86261e3008d63efac2cbd7665b6de4983dd747ee7ed269aa136ffc71df4dfefe",
+      "configure": [
+        "cmake",
+        "-S",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev",
+        "-B",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/dev",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG",
+        "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG",
+        "-DPOPNET_BUILD_TESTS=ON",
+        "-DPOPNET_ENABLE_SANITIZERS=OFF",
+        "-DCMAKE_PREFIX_PATH=/home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/dev",
+        "--parallel",
+        "4"
+      ],
+      "representative_compile_command": "/usr/bin/c++ -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_FILESYSTEM_NO_LIB -DBOOST_GRAPH_DYN_LINK -DBOOST_GRAPH_NO_LIB -DBOOST_IOSTREAMS_DYN_LINK -DBOOST_IOSTREAMS_NO_LIB -DBOOST_RANDOM_DYN_LINK -DBOOST_RANDOM_NO_LIB -DBOOST_REGEX_DYN_LINK -DBOOST_REGEX_NO_LIB -DBOOST_SERIALIZATION_DYN_LINK -DBOOST_SERIALIZATION_NO_LIB -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB -DPOWER_TEST -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/include/popnet -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/fmt/include -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/graph_lib -I/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/nlohmann_json/include -isystem /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/orion_power_beta_mar2003/power -isystem /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/thirdparty/orion_power_beta_mar2003/library -isystem /home/syc/Desktop/code/PopnetChipletV2/experiment/deps/usr/include -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -o CMakeFiles/popnet_core.dir/src/alg/shortest_path_routing.cpp.o -c /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/dev/src/alg/shortest_path_routing.cpp"
+    }
+  },
+  "workloads": [
+    {
+      "name": "bundled-random",
+      "description": "Bundled 9x9 random trace, 5 flits/packet",
+      "path": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/inputs/bundled-random.trace",
+      "packets": 11983,
+      "flits": 59915,
+      "last_injection_cycle": 10001.0,
+      "sha256": "8b997ddd82615c21744f0ae5c7161781641bfca0023d8f4fefe2029da143bb9f"
+    },
+    {
+      "name": "uniform",
+      "description": "Uniform random source/destination, one packet every 2 cycles",
+      "path": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/inputs/uniform.trace",
+      "packets": 12000,
+      "flits": 60000,
+      "last_injection_cycle": 23998.0,
+      "sha256": "d7e27208e930f97bb0b4e669a5377df4769f25ed0b062628edee55341e3662d1"
+    },
+    {
+      "name": "hotspot",
+      "description": "Random sources to (4,4), one packet every 2 cycles",
+      "path": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/inputs/hotspot.trace",
+      "packets": 12000,
+      "flits": 60000,
+      "last_injection_cycle": 23998.0,
+      "sha256": "1f9643e38facd4b376d189ceeae6d4b8eb450b306a946549402b52ebd8fc93ba"
+    },
+    {
+      "name": "single-link-burst",
+      "description": "All at cycle 0, (0,0) to (0,1); timing-bug control",
+      "path": "/home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/inputs/single-link-burst.trace",
+      "packets": 4000,
+      "flits": 20000,
+      "last_injection_cycle": 0.0,
+      "sha256": "624129e92528ed94d2901baa09316b86de0bd4192bf0380f5014e5d3bacf32d0"
+    }
+  ],
+  "resumptions": [
+    {
+      "utc": "2026-09-24T10:14:53.652668+00:00",
+      "runner_sha256": "0823419bcb977756ea94051f279888b8219ab8f40b90a7d2b62aa64bc13cb255",
+      "retained_samples": 24
+    }
+  ]
+}

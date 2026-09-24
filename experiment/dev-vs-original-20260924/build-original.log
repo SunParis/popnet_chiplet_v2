@@ -1,0 +1,18 @@
+CMake Warning (policy) at thirdparty/graph_lib/CMakeLists.txt:11 (find_package):
+  Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+  --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- {fmt} version: 11.2.1
+-- Build type: RELEASE
+-- Using the multi-header code from /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/sources/original/thirdparty/nlohmann_json/include/
+-- GCC detected, version: 16.2.1
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/syc/Desktop/code/PopnetChipletV2/experiment/dev-vs-original-20260924/builds/original
+[ 21%] Built target fmt
+[ 43%] Built target orion_power
+[ 50%] Built target mygraph
+[100%] Built target popnet

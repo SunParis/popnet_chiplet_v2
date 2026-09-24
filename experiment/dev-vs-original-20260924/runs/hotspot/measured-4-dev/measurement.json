@@ -1,0 +1,19 @@
+{
+  "workload": "hotspot",
+  "version": "dev",
+  "phase": "measured",
+  "repetition": 4,
+  "wall_seconds": 1.181819635,
+  "user_seconds": 1.13,
+  "system_seconds": 0.04,
+  "peak_rss_kib": 15368,
+  "completed": 12000,
+  "average_delay": 1391.37125,
+  "timestamp_mismatches": 0,
+  "delay_sha256": "c1390ebd9b7684977f2e5cb290b61545ec76b00a49ca5071fd1a996ef7c40126",
+  "sorted_delay_sha256": "4c17e52e6f5739702804d515d5ecab57982c09c50d9720f03620d7b47f2c401b",
+  "log_bytes": 103974468,
+  "complete": true,
+  "missing_routes": 0,
+  "extra_routes": 0
+}

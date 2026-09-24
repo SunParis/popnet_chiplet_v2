@@ -1,0 +1,19 @@
+{
+  "workload": "single-link-burst",
+  "version": "dev",
+  "phase": "measured",
+  "repetition": 2,
+  "wall_seconds": 0.299302058,
+  "user_seconds": 0.29,
+  "system_seconds": 0.0,
+  "peak_rss_kib": 12560,
+  "completed": 4000,
+  "average_delay": 10012.71075,
+  "timestamp_mismatches": 0,
+  "delay_sha256": "5fb0c6b6614842e52e89d0e065412d4edcbdcacc947c47744c6bdeda9643a42d",
+  "sorted_delay_sha256": "93b5c8613e7ddd9332d65b4102777135f0f9e01e35cd20f6c53fde740c7cdae1",
+  "log_bytes": 9612301,
+  "complete": true,
+  "missing_routes": 0,
+  "extra_routes": 0
+}
